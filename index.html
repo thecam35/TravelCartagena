@@ -1,0 +1,3365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospedajes Cartagena | Alojamientos exclusivos en la Heroica</title>
+    <meta name="description" content="Encuentra los mejores alojamientos en Cartagena de Indias. Apartamentos, casas, hostales y más para tus vacaciones inolvidables.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --primary-dark: #003d7a;
+            --primary-light: #e6f0ff;
+            --secondary: #f8b400;
+            --secondary-dark: #d89e00;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+            opacity: 0.5;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .nav-menu li a {
+            color: var(--dark);
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu li a i {
+            margin-right: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-menu li a:hover::after {
+            width: 100%;
+        }
+
+        .nav-menu li a:hover {
+            color: var(--primary);
+        }
+
+        .nav-menu li.active a {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-menu li.active a::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1531219572328-a0171b4448a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Search Form */
+        .search-container {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .search-group {
+            position: relative;
+        }
+
+        .search-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .search-group input,
+        .search-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+
+        .search-group input:focus,
+        .search-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        .search-btn {
+            grid-column: 1 / -1;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .search-btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        /* Property List */
+        .property-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--secondary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .property-img {
+            height: 220px;
+            width: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .property-card:hover .property-img {
+            transform: scale(1.05);
+        }
+
+        .property-content {
+            padding: 1.5rem;
+        }
+
+        .property-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .property-location {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .property-location i {
+            margin-right: 0.3rem;
+            color: var(--primary);
+        }
+
+        .property-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .feature i {
+            margin-right: 0.3rem;
+            color: var(--primary);
+        }
+
+        .property-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 1rem;
+        }
+
+        .property-price span {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--gray);
+        }
+
+        .property-btn {
+            display: block;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .property-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Property Detail */
+        .property-detail {
+            padding: 4rem 0;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background: var(--gray-light);
+            color: var(--dark);
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background: var(--gray);
+            color: white;
+        }
+
+        .back-btn i {
+            margin-right: 0.5rem;
+        }
+
+        .property-header {
+            margin-bottom: 2rem;
+        }
+
+        .property-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .property-header .location {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .property-header .location i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .property-header .rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .property-header .stars {
+            color: var(--secondary);
+            margin-right: 0.5rem;
+        }
+
+        .property-header .reviews {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .property-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .main-image {
+            grid-column: span 3;
+            grid-row: span 2;
+            height: 500px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .main-image:hover img {
+            transform: scale(1.03);
+        }
+
+        .thumb-image {
+            height: calc(250px - 0.5rem);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .thumb-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .thumb-image:hover::after {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .thumb-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .property-body {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .property-description {
+            margin-bottom: 2rem;
+        }
+
+        .property-description h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .property-description p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .property-amenities {
+            margin-bottom: 2rem;
+        }
+
+        .property-amenities h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .amenity-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+        }
+
+        .amenity-item i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .property-sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .booking-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .booking-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--gray);
+        }
+
+        .booking-form {
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .booking-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .booking-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Login & Register Forms */
+        .auth-container {
+            max-width: 600px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .auth-header p {
+            color: var(--gray);
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-form .form-group label {
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-form .form-group input {
+            padding: 0.8rem 1rem;
+        }
+
+        .auth-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .auth-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--gray);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Profile Page */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .profile-sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary-light);
+            margin: 0 auto 1.5rem;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .profile-email {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-info {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .profile-info p span:first-child {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .profile-info p span:last-child {
+            color: var(--gray);
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .profile-btn {
+            display: block;
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .profile-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .profile-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .profile-btn.secondary {
+            background: var(--gray-light);
+            color: var(--dark);
+        }
+
+        .profile-btn.secondary:hover {
+            background: var(--gray);
+            color: white;
+        }
+
+        .profile-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .profile-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 2rem;
+        }
+
+        .profile-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .profile-tab.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .profile-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .profile-tab-content {
+            display: none;
+        }
+
+        .profile-tab-content.active {
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .footer-col p {
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: white;
+            opacity: 0.8;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .footer-links a i {
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .footer-social a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.8;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(248, 180, 0, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-primary {
+            color: var(--primary);
+        }
+
+        .text-secondary {
+            color: var(--secondary);
+        }
+
+        .bg-light {
+            background: var(--light);
+        }
+
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+        .mt-3 { margin-top: 3rem; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-2 { margin-bottom: 2rem; }
+        .mb-3 { margin-bottom: 3rem; }
+        .py-3 { padding-top: 3rem; padding-bottom: 3rem; }
+        .px-2 { padding-left: 2rem; padding-right: 2rem; }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .property-body {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background: white;
+                flex-direction: column;
+                align-items: center;
+                padding: 2rem 0;
+                transition: var(--transition);
+                z-index: 99;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-menu li {
+                margin: 0.5rem 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .property-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-image {
+                grid-column: span 2;
+                height: 400px;
+            }
+            
+            .thumb-image {
+                height: calc(200px - 0.5rem);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .property-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-image {
+                grid-column: span 1;
+                height: 300px;
+            }
+            
+            .thumb-image {
+                height: 100px;
+            }
+            
+            .amenities-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>Hospedajes Cartagena</h1>
+            <p>Encuentra tu alojamiento perfecto en la Heroica</p>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <a href="#" class="logo" onclick="showSection('home')">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Hospedajes</span>
+            </a>
+            
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu" id="nav-menu">
+                <li class="active"><a href="#" onclick="showSection('home')"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#" onclick="showSection('properties')"><i class="fas fa-building"></i> Propiedades</a></li>
+                <li><a href="#" onclick="showSection('publish')"><i class="fas fa-plus-circle"></i> Publicar</a></li>
+                <li id="register-nav-item"><a href="#" onclick="showSection('register')"><i class="fas fa-user-plus"></i> Registrarse</a></li>
+                <li id="login-nav-item"><a href="#" onclick="showSection('login')"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a></li>
+                <li id="profile-nav-item" class="hidden"><a href="#" onclick="showSection('profile')"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                <li id="logout-nav-item" class="hidden"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                <li><a href="#" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home-section">
+        <div class="hero-content">
+            <h1>Descubre la magia de Cartagena</h1>
+            <p>Encuentra los mejores alojamientos para tus vacaciones inolvidables</p>
+            <a href="#" class="btn btn-primary" onclick="showSection('properties')">
+                <i class="fas fa-search"></i> Explorar Propiedades
+            </a>
+        </div>
+    </section>
+    
+    <!-- Search Form -->
+    <div class="container">
+        <div class="search-container">
+            <form class="search-form">
+                <div class="search-group">
+                    <label for="search-location"><i class="fas fa-map-marker-alt"></i> Ubicación</label>
+                    <select id="search-location">
+                        <option value="">Toda Cartagena</option>
+                        <option value="bocagrande">Bocagrande</option>
+                        <option value="getsemani">Getsemaní</option>
+                        <option value="centro">Centro Histórico</option>
+                        <option value="manga">Manga</option>
+                        <option value="castillogrande">Castillo Grande</option>
+                    </select>
+                </div>
+                
+                <div class="search-group">
+                    <label for="search-type"><i class="fas fa-home"></i> Tipo</label>
+                    <select id="search-type">
+                        <option value="">Todos los tipos</option>
+                        <option value="apartment">Apartamento</option>
+                        <option value="house">Casa</option>
+                        <option value="room">Habitación</option>
+                        <option value="hostel">Hostal</option>
+                    </select>
+                </div>
+                
+                <div class="search-group">
+                    <label for="search-checkin"><i class="fas fa-calendar-alt"></i> Llegada</label>
+                    <input type="date" id="search-checkin">
+                </div>
+                
+                <div class="search-group">
+                    <label for="search-checkout"><i class="fas fa-calendar-alt"></i> Salida</label>
+                    <input type="date" id="search-checkout">
+                </div>
+                
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Featured Properties -->
+        <section class="container py-3">
+            <div class="section-title">
+                <h2>Propiedades Destacadas</h2>
+            </div>
+            
+            <div class="property-list" id="featured-properties">
+                <!-- Las propiedades destacadas se cargarán aquí -->
+                <div class="text-center py-3">
+                    <div class="loading"></div>
+                    <p>Cargando propiedades destacadas...</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="#" class="btn btn-outline" onclick="showSection('properties')">
+                    <i class="fas fa-eye"></i> Ver Todas las Propiedades
+                </a>
+            </div>
+        </section>
+        
+        <!-- All Properties Section (hidden by default) -->
+        <section id="properties-section" class="hidden">
+            <div class="container py-3">
+                <div class="section-title">
+                    <h2>Todas las Propiedades</h2>
+                </div>
+                
+                <div class="property-list" id="all-properties">
+                    <!-- Todas las propiedades se cargarán aquí -->
+                    <div class="text-center py-3">
+                        <div class="loading"></div>
+                        <p>Cargando propiedades...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Property Detail Section (hidden by default) -->
+        <section id="property-detail-section" class="hidden">
+            <div class="container py-3">
+                <a href="#" class="back-btn" onclick="showSection('properties')">
+                    <i class="fas fa-arrow-left"></i> Volver a propiedades
+                </a>
+                
+                <div id="property-detail-content">
+                    <!-- El detalle de la propiedad se cargará aquí -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Publish Property Section (hidden by default) -->
+        <section id="publish-section" class="hidden">
+            <div class="container py-3">
+                <div class="section-title">
+                    <h2>Publicar Propiedad</h2>
+                </div>
+                
+                <div id="publish-login-message" class="hidden">
+                    <div class="auth-container text-center">
+                        <i class="fas fa-lock fa-3x mb-2 text-primary"></i>
+                        <h3>Acceso Requerido</h3>
+                        <p class="mb-3">Debes iniciar sesión para publicar una propiedad.</p>
+                        <button class="btn btn-primary" onclick="showSection('login')">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </button>
+                        <p class="mt-2">¿No tienes cuenta? <a href="#" onclick="showSection('register')" class="text-primary">Regístrate aquí</a></p>
+                    </div>
+                </div>
+                
+                <div id="publish-form-container" class="hidden">
+                    <div class="auth-container">
+                        <form id="publish-form">
+                            <h3 class="mb-3"><i class="fas fa-info-circle text-primary"></i> Información Básica</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="property-type">Tipo de propiedad</label>
+                                    <select id="property-type" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="apartment">Apartamento</option>
+                                        <option value="house">Casa</option>
+                                        <option value="room">Habitación</option>
+                                        <option value="hostel">Hostal</option>
+                                        <option value="hotel">Hotel</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="property-operation">Tipo de operación</label>
+                                    <select id="property-operation" required>
+                                        <option value="rent">Arriendo</option>
+                                        <option value="sale">Venta</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="property-title">Título del anuncio</label>
+                                <input type="text" id="property-title" placeholder="Ej: Acogedor apartamento en Bocagrande con vista al mar" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="property-description">Descripción detallada</label>
+                                <textarea id="property-description" rows="6" placeholder="Describe tu propiedad con detalles como distribución, mobiliario, servicios incluidos, etc." required></textarea>
+                            </div>
+                            
+                            <h3 class="mb-3"><i class="fas fa-map-marker-alt text-primary"></i> Ubicación</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="property-address">Dirección exacta</label>
+                                    <input type="text" id="property-address" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="property-zone">Zona/Barrio</label>
+                                    <select id="property-zone" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="bocagrande">Bocagrande</option>
+                                        <option value="getsemani">Getsemaní</option>
+                                        <option value="centro">Centro Histórico</option>
+                                        <option value="manga">Manga</option>
+                                        <option value="castillogrande">Castillo Grande</option>
+                                        <option value="laguito">El Laguito</option>
+                                        <option value="bocachica">Boca Chica</option>
+                                        <option value="lacrespa">La Crespa</option>
+                                        <option value="marbella">Marbella</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <h3 class="mb-3"><i class="fas fa-home text-primary"></i> Detalles de la Propiedad</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="property-price">Precio por noche (COP)</label>
+                                    <input type="number" id="property-price" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="property-area">Área construida (m²)</label>
+                                    <input type="number" id="property-area">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="property-rooms">Habitaciones</label>
+                                    <input type="number" id="property-rooms" min="0">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="property-bathrooms">Baños</label>
+                                    <input type="number" id="property-bathrooms" min="1" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="property-capacity">Capacidad (personas)</label>
+                                    <input type="number" id="property-capacity" min="1" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="property-floors">Pisos/Niveles</label>
+                                    <input type="number" id="property-floors" min="1" value="1">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="property-parking">Parqueaderos</label>
+                                    <input type="number" id="property-parking" min="0" value="0">
+                                </div>
+                            </div>
+                            
+                            <h3 class="mb-3"><i class="fas fa-star text-primary"></i> Comodidades y Servicios</h3>
+                            <div class="amenities-grid">
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-wifi" class="mr-2">
+                                    <label for="amenity-wifi">Wi-Fi</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-air" class="mr-2">
+                                    <label for="amenity-air">Aire acondicionado</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-pool" class="mr-2">
+                                    <label for="amenity-pool">Piscina</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-kitchen" class="mr-2">
+                                    <label for="amenity-kitchen">Cocina equipada</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-tv" class="mr-2">
+                                    <label for="amenity-tv">Televisión</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-laundry" class="mr-2">
+                                    <label for="amenity-laundry">Lavadora</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-gym" class="mr-2">
+                                    <label for="amenity-gym">Gimnasio</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-elevator" class="mr-2">
+                                    <label for="amenity-elevator">Ascensor</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-security" class="mr-2">
+                                    <label for="amenity-security">Seguridad 24/7</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-beach" class="mr-2">
+                                    <label for="amenity-beach">Acceso a playa</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-terrace" class="mr-2">
+                                    <label for="amenity-terrace">Terraza</label>
+                                </div>
+                                <div class="amenity-item">
+                                    <input type="checkbox" id="amenity-breakfast" class="mr-2">
+                                    <label for="amenity-breakfast">Desayuno incluido</label>
+                                </div>
+                            </div>
+                            
+                            <h3 class="mb-3"><i class="fas fa-camera text-primary"></i> Fotos de la Propiedad</h3>
+                            <div class="form-group">
+                                <label for="property-images">Sube fotos de tu propiedad (Máx. 5 imágenes, 500KB cada una)</label>
+                                <input type="file" id="property-images" multiple accept="image/*" class="mb-2">
+                                <div class="image-preview-container" id="image-preview"></div>
+                            </div>
+                            
+                            <h3 class="mb-3"><i class="fas fa-clipboard-list text-primary"></i> Normas del Alojamiento</h3>
+                            <div class="form-group">
+                                <label for="property-rules">Normas especiales (opcional)</label>
+                                <textarea id="property-rules" rows="3" placeholder="Ej: No se permiten fiestas, No mascotas, No fumar, etc."></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="property-checkin">Horario de check-in</label>
+                                    <select id="property-checkin" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="12:00 - 15:00">12:00 PM - 3:00 PM</option>
+                                        <option value="14:00 - 16:00">2:00 PM - 4:00 PM</option>
+                                        <option value="15:00 - 18:00">3:00 PM - 6:00 PM</option>
+                                        <option value="15:00 - 20:00">3:00 PM - 8:00 PM</option>
+                                        <option value="Flexible">Horario flexible</option>
+                                        <option value="Otro">Otro (especificar en normas)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="property-checkout">Horario de check-out</label>
+                                    <select id="property-checkout" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="12:00">12:00 PM</option>
+                                        <option value="Flexible">Horario flexible</option>
+                                        <option value="Otro">Otro (especificar en normas)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block" id="publish-button">
+                                <i class="fas fa-paper-plane"></i> Publicar Propiedad
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Profile Section (hidden by default) -->
+        <section id="profile-section" class="hidden">
+            <div class="container py-3">
+                <div class="profile-container">
+                    <div class="profile-sidebar">
+                        <img src="https://ui-avatars.com/api/?name=Usuario&background=0056b3&color=fff" class="profile-avatar" id="user-avatar">
+                        <h3 class="profile-name" id="user-name">Usuario</h3>
+                        <p class="profile-email" id="user-email">usuario@example.com</p>
+                        
+                        <div class="profile-info">
+                            <p><span>Teléfono:</span> <span id="user-phone">No registrado</span></p>
+                            <p><span>Miembro desde:</span> <span id="user-since">No disponible</span></p>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <button class="profile-btn primary" onclick="showSection('publish')">
+                                <i class="fas fa-plus"></i> Nueva Propiedad
+                            </button>
+                            <button class="profile-btn secondary" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-content">
+                        <div class="profile-tabs">
+                            <div class="profile-tab active" onclick="openProfileTab('properties')">
+                                <i class="fas fa-home"></i> Mis Propiedades
+                            </div>
+                            <div class="profile-tab" onclick="openProfileTab('reservations')">
+                                <i class="fas fa-calendar-alt"></i> Reservaciones
+                            </div>
+                            <div class="profile-tab" onclick="openProfileTab('settings')">
+                                <i class="fas fa-cog"></i> Configuración
+                            </div>
+                        </div>
+                        
+                        <div id="properties-tab" class="profile-tab-content active">
+                            <h3><i class="fas fa-home text-primary"></i> Mis Propiedades Publicadas</h3>
+                            <div class="property-list" id="user-properties-list">
+                                <div class="text-center py-3">
+                                    <div class="loading"></div>
+                                    <p>Cargando propiedades...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="reservations-tab" class="profile-tab-content">
+                            <h3><i class="fas fa-calendar-check text-primary"></i> Reservaciones Recibidas</h3>
+                            <div class="reservations-list" id="reservations-received-list">
+                                <div class="text-center py-3">
+                                    <div class="loading"></div>
+                                    <p>Cargando reservaciones recibidas...</p>
+                                </div>
+                            </div>
+                            
+                            <h3 class="mt-3"><i class="fas fa-calendar-day text-primary"></i> Mis Reservaciones</h3>
+                            <div class="reservations-list" id="reservations-made-list">
+                                <div class="text-center py-3">
+                                    <div class="loading"></div>
+                                    <p>Cargando mis reservaciones...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="settings-tab" class="profile-tab-content">
+                            <h3><i class="fas fa-user-cog text-primary"></i> Configuración de Cuenta</h3>
+                            <form id="profile-form">
+                                <div class="form-group">
+                                    <label for="profile-name">Nombre completo</label>
+                                    <input type="text" id="profile-name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="profile-phone">Teléfono / WhatsApp</label>
+                                    <input type="tel" id="profile-phone">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="profile-email">Correo electrónico</label>
+                                    <input type="email" id="profile-email" disabled>
+                                </div>
+                                
+                                <h4 class="mt-3"><i class="fas fa-lock text-primary"></i> Cambiar Contraseña</h4>
+                                <div class="form-group">
+                                    <label for="profile-current-password">Contraseña actual</label>
+                                    <input type="password" id="profile-current-password">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="profile-new-password">Nueva contraseña</label>
+                                    <input type="password" id="profile-new-password">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="profile-confirm-password">Confirmar nueva contraseña</label>
+                                    <input type="password" id="profile-confirm-password">
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary btn-block" id="profile-save-button">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Register Section (hidden by default) -->
+        <section id="register-section" class="hidden">
+            <div class="container py-3">
+                <div class="auth-container">
+                    <div class="auth-header">
+                        <h2><i class="fas fa-user-plus text-primary"></i> Crear Cuenta</h2>
+                        <p>Regístrate para publicar propiedades y hacer reservas</p>
+                    </div>
+                    
+                    <form id="register-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="register-name">Nombre completo</label>
+                            <input type="text" id="register-name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-phone">Teléfono / WhatsApp</label>
+                            <input type="tel" id="register-phone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-email">Correo electrónico</label>
+                            <input type="email" id="register-email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-password">Contraseña (mínimo 6 caracteres)</label>
+                            <input type="password" id="register-password" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-confirm">Confirmar contraseña</label>
+                            <input type="password" id="register-confirm" required>
+                        </div>
+                        
+                        <button type="submit" class="auth-btn" id="register-button">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </button>
+                        
+                        <div class="auth-footer">
+                            ¿Ya tienes cuenta? <a href="#" onclick="showSection('login')">Inicia sesión</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Login Section (hidden by default) -->
+        <section id="login-section" class="hidden">
+            <div class="container py-3">
+                <div class="auth-container">
+                    <div class="auth-header">
+                        <h2><i class="fas fa-sign-in-alt text-primary"></i> Iniciar Sesión</h2>
+                        <p>Accede a tu cuenta para gestionar tus propiedades</p>
+                    </div>
+                    
+                    <form id="login-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="login-email">Correo electrónico</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="login-password">Contraseña</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        
+                        <button type="submit" class="auth-btn" id="login-button">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </button>
+                        
+                        <div class="auth-footer">
+                            ¿No tienes cuenta? <a href="#" onclick="showSection('register')">Regístrate</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section (hidden by default) -->
+        <section id="contact-section" class="hidden">
+            <div class="container py-3">
+                <div class="auth-container">
+                    <div class="auth-header">
+                        <h2><i class="fas fa-envelope text-primary"></i> Contacto</h2>
+                        <p>¿Tienes alguna pregunta? Escríbenos</p>
+                    </div>
+                    
+                    <form id="contact-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="contact-name">Nombre</label>
+                            <input type="text" id="contact-name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-email">Correo electrónico</label>
+                            <input type="email" id="contact-email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-phone">Teléfono</label>
+                            <input type="tel" id="contact-phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-subject">Asunto</label>
+                            <select id="contact-subject" required>
+                                <option value="">Seleccione...</option>
+                                <option value="question">Consulta</option>
+                                <option value="problem">Problema con reserva</option>
+                                <option value="other">Otro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-message">Mensaje</label>
+                            <textarea id="contact-message" rows="4" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="auth-btn">
+                            <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3>Hospedajes Cartagena</h3>
+                    <p>Encuentra los mejores alojamientos en la hermosa Cartagena de Indias. Disfruta de una experiencia única en la ciudad amurallada.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="showSection('home')"><i class="fas fa-chevron-right"></i> Inicio</a></li>
+                        <li><a href="#" onclick="showSection('properties')"><i class="fas fa-chevron-right"></i> Propiedades</a></li>
+                        <li><a href="#" onclick="showSection('publish')"><i class="fas fa-chevron-right"></i> Publicar</a></li>
+                        <li><a href="#" onclick="showSection('contact')"><i class="fas fa-chevron-right"></i> Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Zonas Populares</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Bocagrande</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Centro Histórico</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Getsemaní</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> El Laguito</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Manga</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Cartagena de Indias, Colombia</p>
+                    <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                    <p><i class="fas fa-envelope"></i> info@hospedajescartagena.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 Hospedajes Cartagena. Todos los derechos reservados. Hecho por Vertice Digital</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDm4482FNu-9yMpbdbp4z2Rldy5sPlZjq8",
+            authDomain: "kursana-71cc3.firebaseapp.com",
+            projectId: "kursana-71cc3",
+            storageBucket: "kursana-71cc3.appspot.com",
+            messagingSenderId: "74043290336",
+            appId: "1:74043290336:web:feb3bfda3ea6867d531685",
+            measurementId: "G-YMXCY3VB54"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Estado de la aplicación
+        const appState = {
+            isLoggedIn: false,
+            currentUser: null
+        };
+
+        // Función para comprimir imágenes
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Tamaño máximo deseado (500KB)
+                        const MAX_WIDTH = 800;
+                        const MAX_HEIGHT = 800;
+                        const QUALITY = 0.7;
+                        
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Redimensionar si es necesario
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convertir a Blob con calidad reducida
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, 'image/jpeg', QUALITY);
+                    };
+                };
+            });
+        }
+
+        // Función para convertir imagen a Base64
+        async function imageToBase64(blob) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onload = () => resolve(reader.result);
+            });
+        }
+
+        // Función para guardar propiedad en Firestore
+        async function saveProperty(propertyData, imageFiles) {
+            // Validar número de imágenes
+            if (imageFiles.length > 5) {
+                throw new Error('Máximo 5 imágenes permitidas');
+            }
+            
+            // Comprimir y convertir imágenes
+            const imageUrls = [];
+            for (let i = 0; i < imageFiles.length; i++) {
+                const file = imageFiles[i];
+                if (!file.type.match('image.*')) continue;
+                
+                let processedFile = file;
+                if (file.size > 500000) { // 500KB
+                    processedFile = await compressImage(file);
+                }
+                
+                const base64 = await imageToBase64(processedFile);
+                imageUrls.push(base64);
+            }
+            
+            // Guardar en Firestore
+            const propertyRef = await db.collection('properties').add({
+                ...propertyData,
+                images: imageUrls,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                ownerId: appState.currentUser.id
+            });
+            
+            return propertyRef.id;
+        }
+
+        // Función para cargar propiedades
+        async function loadProperties(limit = null) {
+            try {
+                let query = db.collection('properties').orderBy('createdAt', 'desc');
+                if (limit) query = query.limit(limit);
+                
+                const snapshot = await query.get();
+                const properties = [];
+                
+                snapshot.forEach(doc => {
+                    properties.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return properties;
+            } catch (error) {
+                console.error("Error loading properties:", error);
+                throw error;
+            }
+        }
+
+        // Función para cargar propiedades de un usuario
+        async function loadUserProperties(userId) {
+            try {
+                if (!appState.isLoggedIn || appState.currentUser.id !== userId) {
+                    throw new Error("No autorizado para ver estas propiedades");
+                }
+                
+                const snapshot = await db.collection('properties')
+                    .where('ownerId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const properties = [];
+                snapshot.forEach(doc => {
+                    properties.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return properties;
+            } catch (error) {
+                console.error("Error loading user properties:", error);
+                throw error;
+            }
+        }
+
+        // Función para cargar reservaciones recibidas (para propietarios)
+        async function loadReceivedReservations(ownerId) {
+            try {
+                if (!appState.isLoggedIn) {
+                    throw new Error("Debes iniciar sesión para ver reservaciones");
+                }
+                
+                const snapshot = await db.collection('reservations')
+                    .where('ownerId', '==', ownerId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const reservations = [];
+                snapshot.forEach(doc => {
+                    reservations.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return reservations;
+            } catch (error) {
+                console.error("Error loading received reservations:", error);
+                throw error;
+            }
+        }
+
+        // Función para cargar reservaciones realizadas (para huéspedes)
+        async function loadMadeReservations(guestEmail) {
+            try {
+                if (!appState.isLoggedIn) {
+                    throw new Error("Debes iniciar sesión para ver reservaciones");
+                }
+                
+                const snapshot = await db.collection('reservations')
+                    .where('guestEmail', '==', guestEmail)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const reservations = [];
+                snapshot.forEach(doc => {
+                    reservations.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return reservations;
+            } catch (error) {
+                console.error("Error loading made reservations:", error);
+                throw error;
+            }
+        }
+
+        // Función para mostrar propiedades destacadas
+        async function loadFeaturedProperties() {
+            const featuredContainer = document.getElementById('featured-properties');
+            featuredContainer.innerHTML = '<div class="text-center py-3"><div class="loading"></div><p>Cargando propiedades destacadas...</p></div>';
+            
+            try {
+                const properties = await loadProperties(3);
+                
+                if (properties.length === 0) {
+                    featuredContainer.innerHTML = '<p class="text-center py-3">No hay propiedades destacadas disponibles.</p>';
+                    return;
+                }
+                
+                featuredContainer.innerHTML = '';
+                
+                properties.forEach(property => {
+                    const propertyCard = document.createElement('div');
+                    propertyCard.className = 'property-card';
+                    propertyCard.innerHTML = `
+                        ${property.operation === 'sale' ? '<div class="property-badge">En Venta</div>' : ''}
+                        <img src="${property.images[0]}" alt="${property.title}" class="property-img">
+                        <div class="property-content">
+                            <h3 class="property-title">${property.title}</h3>
+                            <div class="property-location">
+                                <i class="fas fa-map-marker-alt"></i> ${getZoneName(property.zone)}
+                            </div>
+                            <div class="property-features">
+                                <div class="feature">
+                                    <i class="fas fa-bed"></i> ${property.rooms || 0} hab.
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-bath"></i> ${property.bathrooms} baño(s)
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-users"></i> ${property.capacity} pers.
+                                </div>
+                            </div>
+                            <div class="property-price">
+                                $${property.price.toLocaleString()} <span>COP / noche</span>
+                            </div>
+                            <a href="#" class="property-btn" onclick="showPropertyDetail('${property.id}')">
+                                <i class="fas fa-search"></i> Ver Detalles
+                            </a>
+                        </div>
+                    `;
+                    featuredContainer.appendChild(propertyCard);
+                });
+            } catch (error) {
+                console.error('Error cargando propiedades destacadas:', error);
+                featuredContainer.innerHTML = '<p class="text-center py-3 text-danger">Error cargando propiedades. Por favor intenta nuevamente.</p>';
+            }
+        }
+
+        // Función para mostrar todas las propiedades
+        async function loadAllProperties() {
+            const allContainer = document.getElementById('all-properties');
+            allContainer.innerHTML = '<div class="text-center py-3"><div class="loading"></div><p>Cargando propiedades...</p></div>';
+            
+            try {
+                const properties = await loadProperties();
+                
+                if (properties.length === 0) {
+                    allContainer.innerHTML = '<p class="text-center py-3">No hay propiedades disponibles.</p>';
+                    return;
+                }
+                
+                allContainer.innerHTML = '';
+                
+                properties.forEach(property => {
+                    const propertyCard = document.createElement('div');
+                    propertyCard.className = 'property-card';
+                    propertyCard.innerHTML = `
+                        ${property.operation === 'sale' ? '<div class="property-badge">En Venta</div>' : ''}
+                        <img src="${property.images[0]}" alt="${property.title}" class="property-img">
+                        <div class="property-content">
+                            <h3 class="property-title">${property.title}</h3>
+                            <div class="property-location">
+                                <i class="fas fa-map-marker-alt"></i> ${getZoneName(property.zone)}
+                            </div>
+                            <div class="property-features">
+                                <div class="feature">
+                                    <i class="fas fa-bed"></i> ${property.rooms || 0} hab.
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-bath"></i> ${property.bathrooms} baño(s)
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-users"></i> ${property.capacity} pers.
+                                </div>
+                            </div>
+                            <div class="property-price">
+                                $${property.price.toLocaleString()} <span>COP / noche</span>
+                            </div>
+                            <a href="#" class="property-btn" onclick="showPropertyDetail('${property.id}')">
+                                <i class="fas fa-search"></i> Ver Detalles
+                            </a>
+                        </div>
+                    `;
+                    allContainer.appendChild(propertyCard);
+                });
+            } catch (error) {
+                console.error('Error cargando propiedades:', error);
+                allContainer.innerHTML = '<p class="text-center py-3 text-danger">Error cargando propiedades. Por favor intenta nuevamente.</p>';
+            }
+        }
+
+        // Función para mostrar detalle de propiedad
+        async function showPropertyDetail(propertyId) {
+            try {
+                const doc = await db.collection('properties').doc(propertyId).get();
+                if (!doc.exists) {
+                    throw new Error('Propiedad no encontrada');
+                }
+                
+                const property = doc.data();
+                const detailContent = document.getElementById('property-detail-content');
+                
+                // Buscar información del dueño (solo si el usuario está autenticado)
+                let ownerInfo = { name: "Anfitrión", phone: property.phone };
+                if (property.ownerId && appState.isLoggedIn) {
+                    try {
+                        const userDoc = await db.collection('users').doc(property.ownerId).get();
+                        if (userDoc.exists) {
+                            ownerInfo = userDoc.data();
+                            
+                            // Ocultar teléfono si no es el propietario
+                            if (property.ownerId !== appState.currentUser.id) {
+                                ownerInfo.phone = "Contactar al anfitrión";
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error obteniendo info del propietario:", error);
+                    }
+                }
+                
+                // Crear galería de imágenes
+                let galleryHTML = '';
+                if (property.images.length > 1) {
+                    galleryHTML = `<div class="property-gallery">`;
+                    galleryHTML += `<div class="main-image" onclick="openImageModal('${property.images[0]}')">
+                        <img src="${property.images[0]}" alt="Imagen principal">
+                    </div>`;
+                    
+                    for (let i = 1; i < property.images.length; i++) {
+                        galleryHTML += `<div class="thumb-image" onclick="openImageModal('${property.images[i]}')">
+                            <img src="${property.images[i]}" alt="Imagen ${i + 1}">
+                        </div>`;
+                    }
+                    
+                    galleryHTML += `</div>`;
+                } else {
+                    galleryHTML = `<div class="main-image" onclick="openImageModal('${property.images[0]}')">
+                        <img src="${property.images[0]}" alt="Imagen principal">
+                    </div>`;
+                }
+                
+                // Crear lista de comodidades
+                let amenitiesHTML = '';
+                if (property.amenities && property.amenities.length > 0) {
+                    amenitiesHTML = `<div class="amenities-grid">`;
+                    property.amenities.forEach(amenity => {
+                        amenitiesHTML += `<div class="amenity-item">
+                            <i class="fas fa-check"></i> ${amenity}
+                        </div>`;
+                    });
+                    amenitiesHTML += `</div>`;
+                }
+                
+                detailContent.innerHTML = `
+                    <div class="property-header">
+                        <h1>${property.title}</h1>
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i> ${property.address}, ${getZoneName(property.zone)}
+                        </div>
+                        <div class="rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="reviews">4.5 (12 reseñas)</div>
+                        </div>
+                    </div>
+                    
+                    ${galleryHTML}
+                    
+                    <div class="property-body">
+                        <div>
+                            <div class="property-description">
+                                <h2><i class="fas fa-info-circle"></i> Descripción</h2>
+                                <p>${property.description}</p>
+                            </div>
+                            
+                            <div class="property-amenities">
+                                <h2><i class="fas fa-star"></i> Comodidades</h2>
+                                ${amenitiesHTML || '<p>No se han especificado comodidades.</p>'}
+                            </div>
+                            
+                            <div class="property-description">
+                                <h2><i class="fas fa-clipboard-list"></i> Normas del alojamiento</h2>
+                                <p>${property.rules || 'No se han especificado normas especiales.'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="property-sidebar">
+                            <div class="booking-card">
+                                <div class="booking-price">
+                                    $${property.price.toLocaleString()} <span>COP / noche</span>
+                                </div>
+                                
+                                ${appState.isLoggedIn ? `
+                                <form id="reservation-form" class="booking-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="reservation-checkin">Llegada</label>
+                                            <input type="date" id="reservation-checkin" required>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="reservation-checkout">Salida</label>
+                                            <input type="date" id="reservation-checkout" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="reservation-guests">Huéspedes (máx. ${property.capacity})</label>
+                                        <input type="number" id="reservation-guests" min="1" max="${property.capacity}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="reservation-name">Nombre completo</label>
+                                        <input type="text" id="reservation-name" value="${appState.currentUser.name || ''}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="reservation-phone">Teléfono / WhatsApp</label>
+                                        <input type="tel" id="reservation-phone" value="${appState.currentUser.phone || ''}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="reservation-email">Correo electrónico</label>
+                                        <input type="email" id="reservation-email" value="${appState.currentUser.email || ''}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="reservation-message">Mensaje adicional (opcional)</label>
+                                        <textarea id="reservation-message" rows="3"></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="booking-btn">
+                                        <i class="fas fa-calendar-check"></i> Reservar Ahora
+                                    </button>
+                                </form>
+                                ` : `
+                                <div class="text-center py-3">
+                                    <p>Debes <a href="#" onclick="showSection('login')" class="text-primary">iniciar sesión</a> para hacer una reserva.</p>
+                                    <a href="#" class="btn btn-primary" onclick="showSection('login')">
+                                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                                    </a>
+                                </div>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Configurar el formulario de reserva si existe
+                const reservationForm = document.getElementById('reservation-form');
+                if (reservationForm) {
+                    reservationForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        sendReservation(property, ownerInfo);
+                    });
+                }
+                
+                // Mostrar la sección de detalle
+                showSection('property-detail');
+            } catch (error) {
+                console.error('Error mostrando detalle de propiedad:', error);
+                alert('Error al cargar los detalles de la propiedad: ' + error.message);
+                showSection('properties');
+            }
+        }
+
+        // Función para abrir modal de imagen
+        function openImageModal(imageSrc) {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.zIndex = '1000';
+            modal.style.cursor = 'zoom-out';
+            
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.style.maxWidth = '90%';
+            img.style.maxHeight = '90%';
+            img.style.objectFit = 'contain';
+            
+            modal.appendChild(img);
+            modal.onclick = () => document.body.removeChild(modal);
+            
+            document.body.appendChild(modal);
+        }
+
+        // Función para enviar reserva
+        async function sendReservation(property, owner) {
+            try {
+                const checkin = document.getElementById('reservation-checkin').value;
+                const checkout = document.getElementById('reservation-checkout').value;
+                const guests = document.getElementById('reservation-guests').value;
+                const name = document.getElementById('reservation-name').value;
+                const phone = document.getElementById('reservation-phone').value;
+                const email = document.getElementById('reservation-email').value;
+                const message = document.getElementById('reservation-message').value;
+                
+                // Validar fechas
+                if (!checkin || !checkout) {
+                    throw new Error('Por favor selecciona las fechas de tu estadía');
+                }
+                
+                // Calcular noches y total
+                const date1 = new Date(checkin);
+                const date2 = new Date(checkout);
+                
+                if (date2 <= date1) {
+                    throw new Error('La fecha de salida debe ser posterior a la fecha de llegada');
+                }
+                
+                const nights = Math.ceil((date2 - date1) / (1000 * 60 * 60 * 24));
+                const total = nights * property.price;
+                
+                // Formatear fechas
+                const formattedCheckin = formatDate(checkin);
+                const formattedCheckout = formatDate(checkout);
+                
+                // Crear mensaje para WhatsApp
+                const whatsappMessage = `¡Nueva solicitud de reserva!%0A%0A*🏠 Propiedad:* ${property.title}%0A*📍 Ubicación:* ${property.address}%0A*💰 Precio por noche:* $${property.price.toLocaleString()} COP%0A%0A*📅 Fechas de reserva:*%0A- Llegada: ${formattedCheckin}%0A- Salida: ${formattedCheckout}%0A- Noches: ${nights}%0A*👥 Huéspedes:* ${guests}%0A*💵 Total estimado:* $${total.toLocaleString()} COP%0A%0A*📌 Datos del huésped:*%0A- 👤 Nombre: ${name}%0A- 📞 Teléfono: ${phone}%0A- 📧 Email: ${email}%0A%0A*✉️ Mensaje adicional:*%0A${message || 'Ninguno'}%0A%0A¿Está disponible para estas fechas?`;
+                
+                // Abrir WhatsApp con el mensaje
+                window.open(`https://wa.me/${owner.phone}?text=${whatsappMessage}`, '_blank');
+                
+                // Guardar la reserva en Firestore
+                await db.collection('reservations').add({
+                    propertyId: property.id,
+                    propertyTitle: property.title,
+                    ownerId: property.ownerId,
+                    guestName: name,
+                    guestPhone: phone,
+                    guestEmail: email,
+                    checkin: checkin,
+                    checkout: checkout,
+                    guests: guests,
+                    message: message,
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('Se ha abierto WhatsApp con los datos de tu reserva. Por favor completa el proceso de reserva directamente con el propietario.');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // Función para cargar perfil de usuario
+        async function loadUserProfile() {
+            if (!appState.isLoggedIn) return;
+            
+            // Actualizar información del usuario
+            document.getElementById('user-name').textContent = appState.currentUser.name;
+            document.getElementById('user-phone').textContent = appState.currentUser.phone || 'No registrado';
+            document.getElementById('user-email').textContent = appState.currentUser.email;
+            document.getElementById('user-since').textContent = appState.currentUser.createdAt.toLocaleDateString('es-ES');
+            
+            // Actualizar avatar
+            const avatar = document.getElementById('user-avatar');
+            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(appState.currentUser.name)}&background=0056b3&color=fff`;
+            
+            // Cargar propiedades del usuario
+            const propertiesList = document.getElementById('user-properties-list');
+            propertiesList.innerHTML = '<div class="text-center py-3"><div class="loading"></div><p>Cargando propiedades...</p></div>';
+            
+            try {
+                const properties = await loadUserProperties(appState.currentUser.id);
+                
+                if (properties.length === 0) {
+                    propertiesList.innerHTML = '<p class="text-center py-3">No has publicado ninguna propiedad aún.</p>';
+                } else {
+                    propertiesList.innerHTML = '';
+                    properties.forEach(property => {
+                        const propertyCard = document.createElement('div');
+                        propertyCard.className = 'property-card';
+                        propertyCard.innerHTML = `
+                            <img src="${property.images[0]}" alt="${property.title}" class="property-img">
+                            <div class="property-content">
+                                <h3 class="property-title">${property.title}</h3>
+                                <div class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i> ${getZoneName(property.zone)}
+                                </div>
+                                <div class="property-features">
+                                    <div class="feature">
+                                        <i class="fas fa-bed"></i> ${property.rooms || 0} hab.
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-bath"></i> ${property.bathrooms} baño(s)
+                                    </div>
+                                </div>
+                                <div class="property-price">
+                                    $${property.price.toLocaleString()} <span>COP / noche</span>
+                                </div>
+                                <div class="property-actions mt-2">
+                                    <button class="btn btn-secondary" onclick="editProperty('${property.id}')">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteProperty('${property.id}')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        propertiesList.appendChild(propertyCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error cargando propiedades:', error);
+                propertiesList.innerHTML = '<p class="text-center py-3 text-danger">Error cargando propiedades. Por favor intenta nuevamente.</p>';
+            }
+            
+            // Cargar reservaciones recibidas (como propietario)
+            const receivedReservationsList = document.getElementById('reservations-received-list');
+            receivedReservationsList.innerHTML = '<div class="text-center py-3"><div class="loading"></div><p>Cargando reservaciones recibidas...</p></div>';
+            
+            try {
+                const receivedReservations = await loadReceivedReservations(appState.currentUser.id);
+                
+                if (receivedReservations.length === 0) {
+                    receivedReservationsList.innerHTML = '<p class="text-center py-3">No tienes reservaciones recibidas.</p>';
+                } else {
+                    receivedReservationsList.innerHTML = '';
+                    receivedReservations.forEach(reservation => {
+                        let statusClass = 'badge-warning';
+                        let statusIcon = 'fa-clock';
+                        if (reservation.status === 'confirmed') {
+                            statusClass = 'badge-success';
+                            statusIcon = 'fa-check';
+                        }
+                        if (reservation.status === 'cancelled') {
+                            statusClass = 'badge-danger';
+                            statusIcon = 'fa-times';
+                        }
+                        
+                        const reservationCard = document.createElement('div');
+                        reservationCard.className = 'property-card';
+                        reservationCard.innerHTML = `
+                            <div class="property-content">
+                                <h3 class="property-title">${reservation.propertyTitle}</h3>
+                                <div class="property-features">
+                                    <div class="feature">
+                                        <i class="fas fa-user"></i> ${reservation.guestName}
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-phone"></i> ${formatPhone(reservation.guestPhone)}
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-envelope"></i> ${reservation.guestEmail}
+                                    </div>
+                                </div>
+                                <div class="property-features">
+                                    <div class="feature">
+                                        <i class="fas fa-calendar-day"></i> ${formatDate(reservation.checkin)}
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-calendar-times"></i> ${formatDate(reservation.checkout)}
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-users"></i> ${reservation.guests} pers.
+                                    </div>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span class="badge ${statusClass}">
+                                        <i class="fas ${statusIcon}"></i> ${getReservationStatusName(reservation.status)}
+                                    </span>
+                                </div>
+                                <p><strong>Mensaje:</strong> ${reservation.message || 'Ninguno'}</p>
+                                
+                                ${reservation.status === 'pending' ? `
+                                <div class="property-actions mt-2">
+                                    <button class="btn btn-success" onclick="changeReservationStatus('${reservation.id}', 'confirmed')">
+                                        <i class="fas fa-check"></i> Confirmar
+                                    </button>
+                                    <button class="btn btn-danger" onclick="changeReservationStatus('${reservation.id}', 'cancelled')">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                </div>
+                                ` : ''}
+                            </div>
+                        `;
+                        receivedReservationsList.appendChild(reservationCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error cargando reservaciones recibidas:', error);
+                receivedReservationsList.innerHTML = '<p class="text-center py-3 text-danger">Error cargando reservaciones recibidas. Por favor intenta nuevamente.</p>';
+            }
+            
+            // Cargar reservaciones realizadas (como huésped)
+            const madeReservationsList = document.getElementById('reservations-made-list');
+            madeReservationsList.innerHTML = '<div class="text-center py-3"><div class="loading"></div><p>Cargando mis reservaciones...</p></div>';
+            
+            try {
+                const madeReservations = await loadMadeReservations(appState.currentUser.email);
+                
+                if (madeReservations.length === 0) {
+                    madeReservationsList.innerHTML = '<p class="text-center py-3">No has realizado ninguna reservación.</p>';
+                } else {
+                    madeReservationsList.innerHTML = '';
+                    madeReservations.forEach(reservation => {
+                        let statusClass = 'badge-warning';
+                        let statusIcon = 'fa-clock';
+                        if (reservation.status === 'confirmed') {
+                            statusClass = 'badge-success';
+                            statusIcon = 'fa-check';
+                        }
+                        if (reservation.status === 'cancelled') {
+                            statusClass = 'badge-danger';
+                            statusIcon = 'fa-times';
+                        }
+                        
+                        const reservationCard = document.createElement('div');
+                        reservationCard.className = 'property-card';
+                        reservationCard.innerHTML = `
+                            <div class="property-content">
+                                <h3 class="property-title">${reservation.propertyTitle}</h3>
+                                <div class="property-features">
+                                    <div class="feature">
+                                        <i class="fas fa-calendar-day"></i> ${formatDate(reservation.checkin)}
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-calendar-times"></i> ${formatDate(reservation.checkout)}
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-users"></i> ${reservation.guests} pers.
+                                    </div>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span class="badge ${statusClass}">
+                                        <i class="fas ${statusIcon}"></i> ${getReservationStatusName(reservation.status)}
+                                    </span>
+                                </div>
+                                <p><strong>Mensaje:</strong> ${reservation.message || 'Ninguno'}</p>
+                            </div>
+                        `;
+                        madeReservationsList.appendChild(reservationCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error cargando mis reservaciones:', error);
+                madeReservationsList.innerHTML = '<p class="text-center py-3 text-danger">Error cargando mis reservaciones. Por favor intenta nuevamente.</p>';
+            }
+        }
+
+        // Función para editar propiedad
+        async function editProperty(propertyId) {
+            try {
+                const doc = await db.collection('properties').doc(propertyId).get();
+                if (!doc.exists) {
+                    throw new Error('Propiedad no encontrada');
+                }
+                
+                const property = doc.data();
+                
+                // Verificar que el usuario es el propietario
+                if (property.ownerId !== appState.currentUser.id) {
+                    throw new Error('No tienes permiso para editar esta propiedad');
+                }
+                
+                // Llenar formulario con datos de la propiedad
+                document.getElementById('property-type').value = property.type;
+                document.getElementById('property-operation').value = property.operation;
+                document.getElementById('property-title').value = property.title;
+                document.getElementById('property-description').value = property.description;
+                document.getElementById('property-address').value = property.address;
+                document.getElementById('property-zone').value = property.zone;
+                document.getElementById('property-price').value = property.price;
+                document.getElementById('property-area').value = property.area || '';
+                document.getElementById('property-rooms').value = property.rooms || '';
+                document.getElementById('property-bathrooms').value = property.bathrooms;
+                document.getElementById('property-capacity').value = property.capacity;
+                document.getElementById('property-floors').value = property.floors || 1;
+                document.getElementById('property-parking').value = property.parking || 0;
+                document.getElementById('property-rules').value = property.rules || '';
+                document.getElementById('property-checkin').value = property.checkin || '';
+                document.getElementById('property-checkout').value = property.checkout || '';
+                
+                // Marcar comodidades
+                if (property.amenities) {
+                    property.amenities.forEach(amenity => {
+                        const amenityId = 'amenity-' + amenity.toLowerCase().replace(/ /g, '-');
+                        const checkbox = document.getElementById(amenityId);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+                
+                // Mostrar imágenes existentes
+                const previewContainer = document.getElementById('image-preview');
+                previewContainer.innerHTML = '';
+                property.images.forEach(img => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = img;
+                    imgElement.classList.add('image-preview');
+                    imgElement.style.cursor = 'pointer';
+                    imgElement.onclick = () => openImageModal(img);
+                    previewContainer.appendChild(imgElement);
+                });
+                
+                // Cambiar texto del botón
+                document.getElementById('publish-button').innerHTML = '<i class="fas fa-save"></i> Actualizar Propiedad';
+                
+                // Guardar ID de la propiedad para actualización
+                document.getElementById('publish-form').dataset.propertyId = propertyId;
+                
+                // Mostrar sección de publicación
+                showSection('publish');
+            } catch (error) {
+                console.error('Error editando propiedad:', error);
+                alert('Error al cargar la propiedad para edición: ' + error.message);
+            }
+        }
+
+        // Función para eliminar propiedad
+        async function deleteProperty(propertyId) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta propiedad? Esta acción no se puede deshacer.')) {
+                try {
+                    // Verificar que el usuario es el propietario
+                    const doc = await db.collection('properties').doc(propertyId).get();
+                    if (!doc.exists) {
+                        throw new Error('Propiedad no encontrada');
+                    }
+                    
+                    if (doc.data().ownerId !== appState.currentUser.id) {
+                        throw new Error('No tienes permiso para eliminar esta propiedad');
+                    }
+                    
+                    await db.collection('properties').doc(propertyId).delete();
+                    alert('Propiedad eliminada correctamente');
+                    loadUserProfile();
+                } catch (error) {
+                    console.error('Error eliminando propiedad:', error);
+                    alert('Error al eliminar la propiedad: ' + error.message);
+                }
+            }
+        }
+
+        // Función para cambiar estado de reservación
+        async function changeReservationStatus(reservationId, status) {
+            try {
+                // Verificar que el usuario es el propietario de la propiedad reservada
+                const reservationDoc = await db.collection('reservations').doc(reservationId).get();
+                if (!reservationDoc.exists) {
+                    throw new Error('Reservación no encontrada');
+                }
+                
+                if (reservationDoc.data().ownerId !== appState.currentUser.id) {
+                    throw new Error('No tienes permiso para modificar esta reservación');
+                }
+                
+                await db.collection('reservations').doc(reservationId).update({
+                    status: status
+                });
+                
+                alert(`Reservación ${getReservationStatusName(status)} correctamente`);
+                loadUserProfile();
+            } catch (error) {
+                console.error('Error cambiando estado:', error);
+                alert('Error al cambiar el estado de la reservación: ' + error.message);
+            }
+        }
+
+        // Función para abrir pestaña en perfil
+        function openProfileTab(tabId) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.profile-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones
+            document.querySelectorAll('.profile-tab').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Activar la pestaña seleccionada
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Función para mostrar sección
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Mostrar la sección solicitada
+            const section = document.getElementById(`${sectionId}-section`);
+            if (section) {
+                section.classList.remove('hidden');
+                
+                // Actualizar navegación activa
+                document.querySelectorAll('.nav-menu li').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                const activeNavItem = document.querySelector(`.nav-menu li a[onclick="showSection('${sectionId}')"]`);
+                if (activeNavItem) {
+                    activeNavItem.parentElement.classList.add('active');
+                }
+                
+                // Mostrar/ocultar formulario de publicación según login
+                if (sectionId === 'publish') {
+                    const loginMessage = document.getElementById('publish-login-message');
+                    const formContainer = document.getElementById('publish-form-container');
+                    
+                    if (appState.isLoggedIn) {
+                        loginMessage.classList.add('hidden');
+                        formContainer.classList.remove('hidden');
+                        // Resetear formulario si no estamos editando
+                        if (!document.getElementById('publish-form').dataset.propertyId) {
+                            document.getElementById('publish-form').reset();
+                            document.getElementById('image-preview').innerHTML = '';
+                            document.getElementById('publish-button').innerHTML = '<i class="fas fa-paper-plane"></i> Publicar Propiedad';
+                        }
+                    } else {
+                        loginMessage.classList.remove('hidden');
+                        formContainer.classList.add('hidden');
+                    }
+                }
+                
+                // Cargar datos según la sección
+                if (sectionId === 'home') loadFeaturedProperties();
+                if (sectionId === 'properties') loadAllProperties();
+                if (sectionId === 'profile') loadUserProfile();
+            }
+            
+            // Cerrar menú móvil si está abierto
+            document.getElementById('nav-menu').classList.remove('active');
+        }
+
+        // Función para actualizar navegación
+        function updateNav() {
+            const registerItem = document.getElementById('register-nav-item');
+            const loginItem = document.getElementById('login-nav-item');
+            const profileItem = document.getElementById('profile-nav-item');
+            const logoutItem = document.getElementById('logout-nav-item');
+            
+            if (appState.isLoggedIn) {
+                registerItem.classList.add('hidden');
+                loginItem.classList.add('hidden');
+                profileItem.classList.remove('hidden');
+                logoutItem.classList.remove('hidden');
+            } else {
+                registerItem.classList.remove('hidden');
+                loginItem.classList.remove('hidden');
+                profileItem.classList.add('hidden');
+                logoutItem.classList.add('hidden');
+            }
+        }
+
+        // Función para cerrar sesión
+        function logout() {
+            auth.signOut().then(() => {
+                appState.isLoggedIn = false;
+                appState.currentUser = null;
+                alert('Has cerrado sesión correctamente');
+                showSection('home');
+            }).catch(error => {
+                console.error('Error al cerrar sesión:', error);
+                alert('Error al cerrar sesión: ' + error.message);
+            });
+        }
+
+        // Funciones auxiliares
+        function getPropertyTypeName(type) {
+            const types = {
+                'apartment': 'Apartamento',
+                'house': 'Casa',
+                'room': 'Habitación',
+                'hostel': 'Hostal',
+                'hotel': 'Hotel'
+            };
+            return types[type] || type;
+        }
+
+        function getZoneName(zone) {
+            const zones = {
+                'bocagrande': 'Bocagrande',
+                'getsemani': 'Getsemaní',
+                'centro': 'Centro Histórico',
+                'manga': 'Manga',
+                'castillogrande': 'Castillo Grande',
+                'laguito': 'El Laguito',
+                'bocachica': 'Boca Chica',
+                'lacrespa': 'La Crespa',
+                'marbella': 'Marbella'
+            };
+            return zones[zone] || zone;
+        }
+
+        function getReservationStatusName(status) {
+            const statuses = {
+                'pending': 'Pendiente',
+                'confirmed': 'Confirmada',
+                'cancelled': 'Cancelada'
+            };
+            return statuses[status] || status;
+        }
+
+        function formatPhone(phone) {
+            if (!phone) return 'No disponible';
+            const cleaned = phone.toString().replace(/\D/g, '');
+            return `+${cleaned.substring(0, 2)} ${cleaned.substring(2, 5)} ${cleaned.substring(5, 8)} ${cleaned.substring(8)}`;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'No especificada';
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+
+        // Manejar registro de usuario
+        document.getElementById('register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const registerButton = document.getElementById('register-button');
+            const originalText = registerButton.innerHTML;
+            registerButton.disabled = true;
+            registerButton.innerHTML = '<span class="loading"></span> Registrando...';
+            
+            try {
+                const name = document.getElementById('register-name').value.trim();
+                const phone = document.getElementById('register-phone').value.trim();
+                const email = document.getElementById('register-email').value.trim();
+                const password = document.getElementById('register-password').value;
+                const confirm = document.getElementById('register-confirm').value;
+                
+                // Validaciones
+                if (!name || !phone || !email || !password || !confirm) {
+                    throw new Error('Por favor completa todos los campos');
+                }
+                
+                if (password !== confirm) {
+                    throw new Error('Las contraseñas no coinciden');
+                }
+                
+                if (password.length < 6) {
+                    throw new Error('La contraseña debe tener al menos 6 caracteres');
+                }
+                
+                if (!phone.match(/^[0-9]{10,15}$/)) {
+                    throw new Error('Teléfono inválido (10-15 dígitos)');
+                }
+                
+                // Registrar en Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Guardar información adicional en Firestore
+                await db.collection('users').doc(user.uid).set({
+                    id: user.uid,
+                    name,
+                    phone,
+                    email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Actualizar estado
+                appState.isLoggedIn = true;
+                appState.currentUser = {
+                    id: user.uid,
+                    name,
+                    phone,
+                    email,
+                    createdAt: new Date()
+                };
+                
+                updateNav();
+                alert('Registro exitoso. Ahora puedes publicar propiedades.');
+                showSection('profile');
+            } catch (error) {
+                console.error('Error en registro:', error);
+                
+                let errorMessage = 'Error en registro';
+                if (error.code) {
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMessage = 'Este correo ya está registrado';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Correo electrónico inválido';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'La contraseña debe tener al menos 6 caracteres';
+                            break;
+                        default:
+                            errorMessage = error.message || errorMessage;
+                    }
+                }
+                
+                alert(errorMessage);
+            } finally {
+                registerButton.disabled = false;
+                registerButton.innerHTML = originalText;
+            }
+        });
+
+        // Manejar inicio de sesión
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loginButton = document.getElementById('login-button');
+            const originalText = loginButton.innerHTML;
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<span class="loading"></span> Iniciando sesión...';
+            
+            try {
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-password').value;
+                
+                if (!email || !password) {
+                    throw new Error('Por favor ingresa tu correo y contraseña');
+                }
+                
+                // Iniciar sesión con Firebase Auth
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Obtener información adicional de Firestore
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (!doc.exists) {
+                    throw new Error('Usuario no encontrado');
+                }
+                
+                const userData = doc.data();
+                
+                // Actualizar estado
+                appState.isLoggedIn = true;
+                appState.currentUser = {
+                    id: user.uid,
+                    name: userData.name,
+                    phone: userData.phone,
+                    email: userData.email,
+                    createdAt: userData.createdAt.toDate()
+                };
+                
+                updateNav();
+                alert('Inicio de sesión exitoso');
+                showSection('profile');
+            } catch (error) {
+                console.error('Error en inicio de sesión:', error);
+                
+                let errorMessage = 'Error en inicio de sesión';
+                if (error.code) {
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'Usuario no encontrado';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Contraseña incorrecta';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Correo electrónico inválido';
+                            break;
+                        default:
+                            errorMessage = error.message || errorMessage;
+                    }
+                }
+                
+                alert(errorMessage);
+            } finally {
+                loginButton.disabled = false;
+                loginButton.innerHTML = originalText;
+            }
+        });
+
+        // Manejar publicación de propiedad
+        document.getElementById('publish-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const publishButton = document.getElementById('publish-button');
+            const originalText = publishButton.innerHTML;
+            publishButton.disabled = true;
+            publishButton.innerHTML = '<span class="loading"></span> Publicando...';
+            
+            try {
+                if (!appState.isLoggedIn) {
+                    throw new Error('Debes iniciar sesión para publicar una propiedad');
+                }
+                
+                // Obtener valores del formulario
+                const type = document.getElementById('property-type').value;
+                const operation = document.getElementById('property-operation').value;
+                const title = document.getElementById('property-title').value;
+                const description = document.getElementById('property-description').value;
+                const address = document.getElementById('property-address').value;
+                const zone = document.getElementById('property-zone').value;
+                const price = parseFloat(document.getElementById('property-price').value);
+                const area = document.getElementById('property-area').value ? parseInt(document.getElementById('property-area').value) : null;
+                const rooms = document.getElementById('property-rooms').value ? parseInt(document.getElementById('property-rooms').value) : null;
+                const bathrooms = parseInt(document.getElementById('property-bathrooms').value);
+                const capacity = parseInt(document.getElementById('property-capacity').value);
+                const floors = document.getElementById('property-floors').value ? parseInt(document.getElementById('property-floors').value) : 1;
+                const parking = document.getElementById('property-parking').value ? parseInt(document.getElementById('property-parking').value) : 0;
+                const rules = document.getElementById('property-rules').value;
+                const checkin = document.getElementById('property-checkin').value;
+                const checkout = document.getElementById('property-checkout').value;
+                
+                // Obtener comodidades seleccionadas
+                const amenities = [];
+                if (document.getElementById('amenity-wifi').checked) amenities.push('Wi-Fi');
+                if (document.getElementById('amenity-air').checked) amenities.push('Aire acondicionado');
+                if (document.getElementById('amenity-pool').checked) amenities.push('Piscina');
+                if (document.getElementById('amenity-kitchen').checked) amenities.push('Cocina equipada');
+                if (document.getElementById('amenity-tv').checked) amenities.push('Televisión');
+                if (document.getElementById('amenity-laundry').checked) amenities.push('Lavadora');
+                if (document.getElementById('amenity-gym').checked) amenities.push('Gimnasio');
+                if (document.getElementById('amenity-elevator').checked) amenities.push('Ascensor');
+                if (document.getElementById('amenity-security').checked) amenities.push('Seguridad 24/7');
+                if (document.getElementById('amenity-beach').checked) amenities.push('Acceso a playa');
+                if (document.getElementById('amenity-terrace').checked) amenities.push('Terraza');
+                if (document.getElementById('amenity-breakfast').checked) amenities.push('Desayuno incluido');
+                
+                // Validaciones básicas
+                if (!type || !title || !description || !address || !zone || !price || !bathrooms || !capacity) {
+                    throw new Error('Por favor completa todos los campos requeridos');
+                }
+                
+                if (price <= 0) {
+                    throw new Error('El precio debe ser mayor a cero');
+                }
+                
+                // Obtener imágenes
+                const imageFiles = document.getElementById('property-images').files;
+                const existingImages = Array.from(document.getElementById('image-preview').children)
+                    .filter(img => img.tagName === 'IMG' && img.src.startsWith('data:image'))
+                    .map(img => img.src);
+                
+                // Si estamos editando y no hay nuevas imágenes, usar las existentes
+                let imagesToUse = existingImages;
+                const isEditing = this.dataset.propertyId;
+                
+                if (!isEditing && (!imageFiles || imageFiles.length === 0)) {
+                    throw new Error('Debes subir al menos una imagen de la propiedad');
+                }
+                
+                if (imageFiles && imageFiles.length > 0) {
+                    // Comprimir y convertir nuevas imágenes
+                    imagesToUse = [];
+                    for (let i = 0; i < imageFiles.length; i++) {
+                        const file = imageFiles[i];
+                        if (!file.type.match('image.*')) continue;
+                        
+                        let processedFile = file;
+                        if (file.size > 500000) { // 500KB
+                            processedFile = await compressImage(file);
+                        }
+                        
+                        const base64 = await imageToBase64(processedFile);
+                        imagesToUse.push(base64);
+                    }
+                }
+                
+                // Crear objeto de propiedad
+                const propertyData = {
+                    type,
+                    operation,
+                    title,
+                    description,
+                    address,
+                    zone,
+                    price,
+                    bathrooms,
+                    capacity,
+                    floors,
+                    parking,
+                    amenities,
+                    ownerId: appState.currentUser.id,
+                    phone: appState.currentUser.phone,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Agregar campos opcionales si existen
+                if (area) propertyData.area = area;
+                if (rooms) propertyData.rooms = rooms;
+                if (rules) propertyData.rules = rules;
+                if (checkin) propertyData.checkin = checkin;
+                if (checkout) propertyData.checkout = checkout;
+                
+                // Guardar propiedad
+                if (isEditing) {
+                    // Actualizar propiedad existente
+                    await db.collection('properties').doc(this.dataset.propertyId).update({
+                        ...propertyData,
+                        images: imagesToUse
+                    });
+                    alert('Propiedad actualizada correctamente');
+                } else {
+                    // Crear nueva propiedad
+                    await db.collection('properties').add({
+                        ...propertyData,
+                        images: imagesToUse
+                    });
+                    alert('Propiedad publicada correctamente');
+                }
+                
+                showSection('profile');
+            } catch (error) {
+                console.error('Error publicando propiedad:', error);
+                alert(error.message || 'Error al publicar la propiedad');
+            } finally {
+                publishButton.disabled = false;
+                publishButton.innerHTML = originalText;
+            }
+        });
+
+        // Manejar actualización de perfil
+        document.getElementById('profile-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const saveButton = document.getElementById('profile-save-button');
+            const originalText = saveButton.innerHTML;
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<span class="loading"></span> Guardando...';
+            
+            try {
+                const name = document.getElementById('profile-name').value.trim();
+                const phone = document.getElementById('profile-phone').value.trim();
+                const currentPassword = document.getElementById('profile-current-password').value;
+                const newPassword = document.getElementById('profile-new-password').value;
+                const confirmPassword = document.getElementById('profile-confirm-password').value;
+                
+                // Validaciones básicas
+                if (!name || !phone) {
+                    throw new Error('Por favor completa todos los campos');
+                }
+                
+                if (!phone.match(/^[0-9]{10,15}$/)) {
+                    throw new Error('Teléfono inválido (10-15 dígitos)');
+                }
+                
+                // Actualizar información en Firestore
+                await db.collection('users').doc(appState.currentUser.id).update({
+                    name,
+                    phone
+                });
+                
+                // Actualizar contraseña si se proporcionó
+                if (currentPassword || newPassword || confirmPassword) {
+                    if (!currentPassword || !newPassword || !confirmPassword) {
+                        throw new Error('Por favor completa todos los campos de contraseña');
+                    }
+                    
+                    if (newPassword !== confirmPassword) {
+                        throw new Error('Las nuevas contraseñas no coinciden');
+                    }
+                    
+                    if (newPassword.length < 6) {
+                        throw new Error('La nueva contraseña debe tener al menos 6 caracteres');
+                    }
+                    
+                    // Reautenticar
+                    const credential = firebase.auth.EmailAuthProvider.credential(
+                        appState.currentUser.email, 
+                        currentPassword
+                    );
+                    
+                    await auth.currentUser.reauthenticateWithCredential(credential);
+                    
+                    // Actualizar contraseña
+                    await auth.currentUser.updatePassword(newPassword);
+                }
+                
+                // Actualizar estado
+                appState.currentUser.name = name;
+                appState.currentUser.phone = phone;
+                
+                alert('Perfil actualizado correctamente');
+                loadUserProfile();
+            } catch (error) {
+                console.error('Error actualizando perfil:', error);
+                
+                let errorMessage = 'Error actualizando perfil';
+                if (error.code) {
+                    switch (error.code) {
+                        case 'auth/wrong-password':
+                            errorMessage = 'Contraseña actual incorrecta';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'La nueva contraseña debe tener al menos 6 caracteres';
+                            break;
+                        default:
+                            errorMessage = error.message || errorMessage;
+                    }
+                }
+                
+                alert(errorMessage);
+            } finally {
+                saveButton.disabled = false;
+                saveButton.innerHTML = originalText;
+            }
+        });
+
+        // Manejar formulario de contacto
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('contact-name').value;
+            const subject = document.getElementById('contact-subject').value;
+            
+            alert(`Gracias ${name}, tu mensaje sobre "${subject}" ha sido enviado. Nos contactaremos contigo pronto.`);
+            showSection('home');
+        });
+
+        // Manejar previsualización de imágenes
+        document.getElementById('property-images').addEventListener('change', function(e) {
+            const previewContainer = document.getElementById('image-preview');
+            previewContainer.innerHTML = '';
+            
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+            
+            if (files.length > 5) {
+                alert('Máximo 5 imágenes permitidas. Se mostrarán las primeras 5.');
+            }
+            
+            const filesToShow = Array.from(files).slice(0, 5);
+            
+            for (let i = 0; i < filesToShow.length; i++) {
+                const file = filesToShow[i];
+                if (!file.type.match('image.*')) continue;
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('image-preview');
+                    img.style.cursor = 'pointer';
+                    img.onclick = () => openImageModal(e.target.result);
+                    previewContainer.appendChild(img);
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Manejar menú móvil
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('nav-menu').classList.toggle('active');
+        });
+
+        // Escuchar cambios en autenticación
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Usuario logueado
+                try {
+                    const doc = await db.collection('users').doc(user.uid).get();
+                    if (doc.exists) {
+                        appState.isLoggedIn = true;
+                        appState.currentUser = {
+                            id: user.uid,
+                            name: doc.data().name,
+                            phone: doc.data().phone,
+                            email: user.email,
+                            createdAt: doc.data().createdAt.toDate()
+                        };
+                    }
+                } catch (error) {
+                    console.error('Error obteniendo datos de usuario:', error);
+                }
+            } else {
+                // Usuario no logueado
+                appState.isLoggedIn = false;
+                appState.currentUser = null;
+            }
+            
+            updateNav();
+        });
+
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('home');
+        });
+    </script>
+</body>
+</html>
